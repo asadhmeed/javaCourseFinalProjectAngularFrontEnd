@@ -1,0 +1,13 @@
+h1{
+    text-align: center;
+}
+.logIn{
+    margin: 2em;
+    margin-right: 60%;
+}
+#companyId, #customerId{
+    margin: 8px ;
+}
+#companyId:hover, #customerId:hover{
+border: 5px solid rgb(145, 138, 138);
+}
