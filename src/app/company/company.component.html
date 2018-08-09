@@ -25,19 +25,25 @@
     
     
     
-    <div class="row" >
+    <div class="row" [hidden]=!logInSuccess>
         <div class="col-3">
           <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
             <a class="nav-link" id="v-pills-creat-coupon-tab"  data-toggle="pill" href="#v-pills-creat-coupon" role="tab" aria-controls="v-pills-creat-coupon" aria-selected="true">Creat Coupon</a>
-            <a class="nav-link" id="v-pills-get-coupon-tab"(click)="listAllCoupons()" data-toggle="pill" href="#v-pills-get-coupon" role="tab" aria-controls="v-pills-get-coupon" aria-selected="false">coupons  </a>
+            <a class="nav-link" id="v-pills-get-coupon-tab"(click)="listAllCoupons(); " data-toggle="pill" href="#v-pills-get-coupon" role="tab" aria-controls="v-pills-get-coupon" aria-selected="false">coupons  </a>
+            <a class="nav-link" id="v-pills-get-coupon-by-type-tab" (click)="activateSearchByType()" data-toggle="pill" href="#v-pills-get-coupon-by-type" role="tab" aria-controls="v-pills-get-coupon-by-type" aria-selected="false">coupons by type</a>
+            <a class="nav-link" id="v-pills-get-coupon-by-price-tab" (click)="activateSearchByPrice()" data-toggle="pill" href="#v-pills-get-coupon-by-price" role="tab" aria-controls="v-pills-get-coupon-by-price" aria-selected="false">coupons by price</a>
+            <a class="nav-link" id="v-pills-get-coupon-by-endDate-tab" (click)="activateSearchByEndDate()" data-toggle="pill" href="#v-pills-get-coupon-by-endDate" role="tab" aria-controls="v-pills-get-coupon-by-endDate" aria-selected="false">coupons by End Date</a>
             <a class="nav-link" id="v-pills-income-list-tab" (click)="listAllCompanyIncome()" data-toggle="pill" href="#v-pills-list-income" role="tab" aria-controls="v-pills-list-income" aria-selected="false">Income Table</a>
           </div>
         </div>
         <div class="col-9">
             <div class="tab-content" id="v-pills-tabContent">
+
+
+
               <div class="tab-pane fade show active" active id="v-pills-creat-coupon" role="tabpanel" aria-labelledby="v-pills-creat-coupon-tab">
                   <div *ngIf="logInSuccess">
-                      {{company | json}}
+                    
                       <form #companyCreatCoupon="ngForm" (ngSubmit)="onCreatCoupon()" novalidate><!--creat company-->
                         <div class="form-group">
                             <label for="inputCouponTitle">Title</label>
@@ -97,7 +103,10 @@
 
 
               <div class="tab-pane fade show active" active id="v-pills-get-coupon" role="tabpanel" aria-labelledby="v-pills-get-coupon-tab">
-              <!-- coupon cards start -->
+            
+              
+                  
+                <!-- coupon cards start -->
                   <div *ngIf="logInSuccess && couponsListed ">
                       <div class="card text-center" id="couponId"  *ngFor="let coupon of couponsList" >
                           <div class="card-header" >
@@ -225,11 +234,479 @@
     </div>
   </div>
 <!-- update compny collap end -->
+</div> 
 
-             
+ <!-- ////////////////////////////////////////////////////////////////////////////////////////////// -->
+ <!-- ////////////////////////////////////////////////////////////////////////////////////////////////////             -->
 
 
-              </div> 
+
+
+
+<!-- type start -->
+<div class="tab-pane fade " active id="v-pills-get-coupon-by-type" role="tabpanel" aria-labelledby="v-pills-get-coupon-by-type-tab">
+    <div *ngIf="logInSuccess && activateGetCouponByTypeTab ">
+     
+    <form #searchByCouponTypeForm="ngForm" (ngSubmit)="listSpecificCouponsByType()" novalidate>
+        <div class="form-row align-items-center">
+            Chose coupon type :
+          <div class="col-auto my-1">
+           
+            <select class="custom-select mr-sm-2" name="couponType" required  #couponType="ngModel" id="couponType-search" [(ngModel)]="serchDataForCoupons.couponType">
+                  
+                <option value="RESTURANS" selected>RESTURANS</option>
+                <option value="ELECTRICITY">ELECTRICITY</option>
+                <option value="FOOD">FOOD</option>
+                <option value="HEALTH">HEALTH</option>
+                <option value="SPORTS">SPORTS</option>
+                <option value="CAMPING">CAMPING</option>
+                <option value="TRAVELLING">TRAVELLING</option>
+              </select>
+          </div>
+         
+          <div class="col-auto my-1">
+            <button type="submit" [disabled]="couponType.invalid" class="btn btn-primary">Search</button>
+          </div>
+        </div>
+      </form>  
+    </div>
+
+
+<!-- coupon by type cards start -->
+<div *ngIf="logInSuccess && specificByTypeCouponsListed ">
+    <div class="card text-center" id="couponIdByType"  *ngFor="let coupon of specificByTypeCouponsList" >
+        <div class="card-header" >
+         Coupon title :  {{coupon.title}}
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-4">
+              Coupon Start date : {{coupon.startDate}}
+            </div>
+            <div class="col-4">
+              Coupon End Date : {{coupon.endDate}}
+              </div>
+              <div class="col-4">
+              Coupon Price : {{coupon.price}}
+                </div>  
+
+          </div>
+          <div class="row">
+              <div class="col-4">
+                Coupon Type : {{coupon.couponType}}
+              </div>
+              <div class="col-4">
+                Coupon Amount : {{coupon.amount}}
+                </div>
+                <div class="col-12">
+                Massege : {{coupon.massage}} 
+                  </div>  
+
+
+
+            </div>
+          
+          <a (click)="saveCouponForDeleteOrUpdate(coupon)"  class="btn btn-primary" data-toggle="modal" data-target="#deletCouponByTypeModalCenter">Delete</a>
+          <a (click)="saveCouponForDeleteOrUpdate(coupon)" class="btn btn-primary" data-toggle="collapse" data-target="#updateCouponByTypeModalCenter" aria-controls="#updateCouponByTypeModalCenter">Update</a>
+          
+        
+        </div>
+        <div class="card-footer text-muted">
+         
+        </div>
+      </div>
+      
+</div>
+
+<!-- coupon by type cards end -->
+<!-- Modal by type start -->
+<div class="modal fade" id="deletCouponByTypeModalCenter" tabindex="-1" role="dialog" aria-labelledby="deletCouponByTypeModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deletCouponByTypeModalCenterTitle">Delete Coupon</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+         do you want to delete this Coupon ?
+         
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" (click)=onDeleteCoupon() class="btn btn-primary" data-dismiss="modal">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Modal by type end -->
+
+
+<!-- update compny by type collap start -->
+<div class="collapse" id="updateCouponByTypeModalCenter">
+    <div class="card card-body">
+        <form #searchCompanyByTypeUpdateCoupon="ngForm" (ngSubmit)="onUpdateCoupon()" novalidate><!--update company-->
+          <div class="form-group">
+              <label for="inputCouponTitle">Title</label>
+              <input type="text" class="form-control" disabled name="couponByTypeTitle" #couponByTypeTitle="ngModel" required id="couponByTypeTitle-update" [(ngModel)]="updatedCoupon.title" >
+          </div>
+          <div class="form-group">
+              <label for="inputCouponStartDate">startDate</label>
+              <input type="date" class="form-control" name="couponByTypeStartDate" #couponByTypeStartDate="ngModel" required id="couponByTypeStartDate-update" [(ngModel)]="updatedCoupon.startDate" >
+          </div>
+          <div class="form-group">
+              <label for="inputCouponEndDate">endDate</label>
+              <input type="date" class="form-control" name="'couponByTypeEndDate'" #couponByTypeEndDate="ngModel" required id="couponByTypeEndDate-update" [(ngModel)]="updatedCoupon.endDate" >
+          </div>
+
+          <div class="form-group">
+              <label for="inputCouponAmount">Amount</label>
+              <input type="number" class="form-control" name="couponByTypeAmount" required  #couponByTypeAmount="ngModel" id="couponByTypeAmount-update" [(ngModel)]="updatedCoupon.amount"  >
+          </div>
+          <div class="form-group">
+              <label for="inputCouponPrice">Price</label>
+              <input type="number" class="form-control" name="couponByTypePrice" required  #couponByTypePrice="ngModel" id="couponByTypePrice-update" [(ngModel)]="updatedCoupon.price"  >
+          </div>
+          
+          <div class="form-group">
+              <label for="inputCouponType">Coupon type</label>
+              <select class="custom-select" name="couponByTypeType" required  #couponByTypeType="ngModel" id="couponByTypeType-update" [(ngModel)]="updatedCoupon.couponType">
+                  
+                  <option value="RESTURANS" selected>RESTURANS</option>
+                  <option value="ELECTRICITY">ELECTRICITY</option>
+                  <option value="FOOD">FOOD</option>
+                  <option value="HEALTH">HEALTH</option>
+                  <option value="SPORTS">SPORTS</option>
+                  <option value="CAMPING">CAMPING</option>
+                  <option value="TRAVELLING">TRAVELLING</option>
+                </select>
+          </div>
+
+          <div class="form-group">
+              <label for="inputCouponMassege">Massege </label>
+              <input type="text" class="form-control" name="couponByTypeMassege" required #couponByTypeMassege="ngModel" id="couponByTypeMassege-update" [(ngModel)]="updatedCoupon.massage" >
+          </div>
+          <div class="form-group">
+              <label for="inputCouponImage">Image </label>
+              <input type="text" class="form-control" name="couponByTypeImage" required #couponByTypeImage="ngModel" id="couponByTypeImage-update" [(ngModel)]="updatedCoupon.image" >
+          </div>
+        
+          <button [disabled]="updataCouponBtnDisabled" type="submit" class="btn btn-primary" [disabled]="couponByTypeTitle.invalid  || couponByTypeStartDate.invalid  ||
+          couponByTypeEndDate.invalid ||couponByTypeAmount.invalid  ||couponByTypeType.invalid  ||couponByTypeMassege.invalid  ||couponByTypeImage.invalid " data-toggle="collapse" data-target="#updateCouponByTypeModalCenter" aria-controls="#updateCouponByTypeModalCenter">Update</button>
+          
+        </form>
+    </div>
+  </div>
+<!-- update compny by type collap end -->
+
+</div>
+<!-- type end -->
+
+
+
+
+<!-- price start -->
+<div class="tab-pane fade "  id="v-pills-get-coupon-by-price" role="tabpanel" aria-labelledby="v-pills-get-coupon-by-price-tab">
+    <div *ngIf="logInSuccess && activateGetCouponByPriceTab ">
+      
+    <form #searchByCouponPriceForm="ngForm" (ngSubmit)="listSpecificCoouponsByPrice()" novalidate>
+        <div class="form-row align-items-center">
+          <div class="col-auto my-1">
+              Enter coupon Price :
+            <input type="number" name="couponPrice" required  #couponPrice="ngModel" id="couponPrice-search" [(ngModel)]="serchDataForCouponsByPrice.price">
+          </div>
+         
+          <div class="col-auto my-1">
+            <button type="submit" [disabled]="couponPrice.invalid" class="btn btn-primary">Search</button>
+          </div>
+        </div>
+      </form>  
+    </div>
+
+
+<!-- coupon by Price cards start -->
+<div *ngIf="logInSuccess && specificByPriceCouponsListed ">
+    <div class="card text-center" id="couponIdByPrice"  *ngFor="let coupon of specificByPriceCouponsList" >
+        <div class="card-header" >
+         Coupon title :  {{coupon.title}}
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-4">
+              Coupon Start date : {{coupon.startDate}}
+            </div>
+            <div class="col-4">
+              Coupon End Date : {{coupon.endDate}}
+              </div>
+              <div class="col-4">
+              Coupon Price : {{coupon.price}}
+                </div>  
+
+          </div>
+          <div class="row">
+              <div class="col-4">
+                Coupon Type : {{coupon.couponType}}
+              </div>
+              <div class="col-4">
+                Coupon Amount : {{coupon.amount}}
+                </div>
+                <div class="col-12">
+                Massege : {{coupon.massage}} 
+                  </div>  
+
+
+
+            </div>
+          
+          <a (click)="saveCouponForDeleteOrUpdate(coupon)"  class="btn btn-primary" data-toggle="modal" data-target="#deletCouponByPriceModalCenter">Delete</a>
+          <a (click)="saveCouponForDeleteOrUpdate(coupon)" class="btn btn-primary" data-toggle="collapse" data-target="#updateCouponByPriceModalCenter" aria-controls="#updateCouponByTypeModalCenter">Update</a>
+          
+        
+        </div>
+        <div class="card-footer text-muted">
+         
+        </div>
+      </div>
+      
+</div>
+
+<!-- coupon by Price cards end -->
+<!-- Modal by Price start -->
+<div class="modal fade" id="deletCouponByPriceModalCenter" tabindex="-1" role="dialog" aria-labelledby="deletCouponByPriceModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deletCouponByPriceModalCenterTitle">Delete Coupon</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+         do you want to delete this Coupon ?
+         
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" (click)=onDeleteCoupon() class="btn btn-primary" data-dismiss="modal">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Modal by price end -->
+
+
+<!-- update compny by price collap start -->
+<div class="collapse" id="updateCouponByPriceModalCenter">
+    <div class="card card-body">
+        <form #searchCompanyByPriceUpdateCoupon="ngForm" (ngSubmit)="onUpdateCoupon()" novalidate><!--update company-->
+          <div class="form-group">
+              <label for="inputCouponTitle">Title</label>
+              <input type="text" class="form-control" disabled name="couponByPriceTitle" #couponByPriceTitle="ngModel" required id="couponByPriceTitle-update" [(ngModel)]="updatedCoupon.title" >
+          </div>
+          <div class="form-group">
+              <label for="inputCouponStartDate">startDate</label>
+              <input type="date" class="form-control" name="couponByPriceStartDate" #couponByPriceStartDate="ngModel" required id="couponByPriceStartDate-update" [(ngModel)]="updatedCoupon.startDate" >
+          </div>
+          <div class="form-group">
+              <label for="inputCouponEndDate">endDate</label>
+              <input type="date" class="form-control" name="'couponByPriceEndDate'" #couponByPriceEndDate="ngModel" required id="couponByPriceEndDate-update" [(ngModel)]="updatedCoupon.endDate" >
+          </div>
+
+          <div class="form-group">
+              <label for="inputCouponAmount">Amount</label>
+              <input type="number" class="form-control" name="couponByPriceAmount" required  #couponByPriceAmount="ngModel" id="couponByPriceAmount-update" [(ngModel)]="updatedCoupon.amount"  >
+          </div>
+          <div class="form-group">
+              <label for="inputCouponPrice">Price</label>
+              <input type="number" class="form-control" name="couponByPricePrice" required  #couponByPricePrice="ngModel" id="couponByPricePrice-update" [(ngModel)]="updatedCoupon.price"  >
+          </div>
+          
+          <div class="form-group">
+              <label for="inputCouponType">Coupon type</label>
+              <select class="custom-select" name="couponByPriceType" required  #couponByPriceType="ngModel" id="couponByPriceType-update" [(ngModel)]="updatedCoupon.couponType">
+                  
+                  <option value="RESTURANS" selected>RESTURANS</option>
+                  <option value="ELECTRICITY">ELECTRICITY</option>
+                  <option value="FOOD">FOOD</option>
+                  <option value="HEALTH">HEALTH</option>
+                  <option value="SPORTS">SPORTS</option>
+                  <option value="CAMPING">CAMPING</option>
+                  <option value="TRAVELLING">TRAVELLING</option>
+                </select>
+          </div>
+
+          <div class="form-group">
+              <label for="inputCouponMassege">Massege </label>
+              <input type="text" class="form-control" name="couponByPriceMassege" required #couponByPriceMassege="ngModel" id="couponByPriceMassege-update" [(ngModel)]="updatedCoupon.massage" >
+          </div>
+          <div class="form-group">
+              <label for="inputCouponImage">Image </label>
+              <input type="text" class="form-control" name="couponByPriceImage" required #couponByPriceImage="ngModel" id="couponByPriceImage-update" [(ngModel)]="updatedCoupon.image" >
+          </div>
+        
+          <button [disabled]="updataCouponBtnDisabled" type="submit" class="btn btn-primary" [disabled]="couponByPriceTitle.invalid  || couponByPriceStartDate.invalid  ||
+          couponByPriceEndDate.invalid ||couponByPriceAmount.invalid  ||couponByPriceType.invalid  ||couponByPriceMassege.invalid  ||couponByPriceImage.invalid " data-toggle="collapse" data-target="#updateCouponByPriceModalCenter" aria-controls="#updateCouponByPriceModalCenter">Update</button>
+          
+        </form>
+    </div>
+  </div>
+<!-- update compny by price collap end -->
+
+</div>
+<!-- price end -->
+
+
+<!-- end date start -->
+<div class="tab-pane fade "  id="v-pills-get-coupon-by-endDate" role="tabpanel" aria-labelledby="v-pills-get-coupon-by-endDate-tab">
+    <div *ngIf="logInSuccess && activateGetCouponByEndDateTab ">
+      
+    <form #searchByCouponEndDateForm="ngForm" (ngSubmit)="listSpecificCoouponsByEndDate()" novalidate>
+        <div class="form-row align-items-center">
+          <div class="col-auto my-1">
+              Enter coupon End Date :
+            <input type="date" name="couponEndDate" required  #couponEndDate="ngModel" id="couponEndDate-search" [(ngModel)]="serchDataForCouponsByEndDate.endDate">
+          </div>
+         
+          <div class="col-auto my-1">
+            <button type="submit" [disabled]="couponEndDate.invalid" class="btn btn-primary">Search</button>
+          </div>
+        </div>
+      </form>  
+    </div>
+<!-- end date end -->
+
+<!-- coupon by EndDate cards start -->
+<div *ngIf="logInSuccess && specificByEndDateCouponsListed ">
+    <div class="card text-center" id="couponIdByEndDate"  *ngFor="let coupon of specificByEndDateCouponsList" >
+        <div class="card-header" >
+         Coupon title :  {{coupon.title}}
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-4">
+              Coupon Start date : {{coupon.startDate}}
+            </div>
+            <div class="col-4">
+              Coupon End Date : {{coupon.endDate}}
+              </div>
+              <div class="col-4">
+              Coupon Price : {{coupon.price}}
+                </div>  
+
+          </div>
+          <div class="row">
+              <div class="col-4">
+                Coupon Type : {{coupon.couponType}}
+              </div>
+              <div class="col-4">
+                Coupon Amount : {{coupon.amount}}
+                </div>
+                <div class="col-12">
+                Massege : {{coupon.massage}} 
+                  </div>  
+
+
+
+            </div>
+          
+          <a (click)="saveCouponForDeleteOrUpdate(coupon)"  class="btn btn-primary" data-toggle="modal" data-target="#deletCouponByEndDateModalCenter">Delete</a>
+          <a (click)="saveCouponForDeleteOrUpdate(coupon)" class="btn btn-primary" data-toggle="collapse" data-target="#updateCouponByEndDateModalCenter" aria-controls="#updateCouponByTypeModalCenter">Update</a>
+          
+        
+        </div>
+        <div class="card-footer text-muted">
+         
+        </div>
+      </div>
+      
+</div>
+
+<!-- coupon by EndDate cards end -->
+<!-- Modal by EndDate start -->
+<div class="modal fade" id="deletCouponByEndDateModalCenter" tabindex="-1" role="dialog" aria-labelledby="deletCouponByEndDateModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deletCouponByEndDateModalCenterTitle">Delete Coupon</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+         do you want to delete this Coupon ?
+         
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" (click)=onDeleteCoupon() class="btn btn-primary" data-dismiss="modal">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Modal by EndDate end -->
+
+
+<!-- update compny by EndDate collap start -->
+<div class="collapse" id="updateCouponByEndDateModalCenter">
+    <div class="card card-body">
+        <form #companyCreatCoupon="ngForm" (ngSubmit)="onUpdateCoupon()" novalidate><!--update company-->
+          <div class="form-group">
+              <label for="inputCouponTitle">Title</label>
+              <input type="text" class="form-control" disabled name="couponByEndDateTitle" #couponByEndDateTitle="ngModel" required id="couponByEndDateTitle-update" [(ngModel)]="updatedCoupon.title" >
+          </div>
+          <div class="form-group">
+              <label for="inputCouponStartDate">startDate</label>
+              <input type="date" class="form-control" name="couponByEndDateStartDate" #couponByEndDateStartDate="ngModel" required id="couponByEndDateStartDate-update" [(ngModel)]="updatedCoupon.startDate" >
+          </div>
+          <div class="form-group">
+              <label for="inputCouponEndDate">endDate</label>
+              <input type="date" class="form-control" name="'couponByEndDateEndDate'" #couponByEndDateEndDate="ngModel" required id="couponByEndDateEndDate-update" [(ngModel)]="updatedCoupon.endDate" >
+          </div>
+
+          <div class="form-group">
+              <label for="inputCouponAmount">Amount</label>
+              <input type="number" class="form-control" name="couponByEndDateAmount" required  #couponByEndDateAmount="ngModel" id="couponByEndDateAmount-update" [(ngModel)]="updatedCoupon.amount"  >
+          </div>
+          <div class="form-group">
+              <label for="inputCouponPrice">Price</label>
+              <input type="number" class="form-control" name="couponByEndDatePrice" required  #couponByEndDatePrice="ngModel" id="couponByEndDatePrice-update" [(ngModel)]="updatedCoupon.price"  >
+          </div>
+          
+          <div class="form-group">
+              <label for="inputCouponType">Coupon type</label>
+              <select class="custom-select" name="couponByEndDateType" required  #couponByEndDateType="ngModel" id="couponByEndDateType-update" [(ngModel)]="updatedCoupon.couponType">
+                  
+                  <option value="RESTURANS" selected>RESTURANS</option>
+                  <option value="ELECTRICITY">ELECTRICITY</option>
+                  <option value="FOOD">FOOD</option>
+                  <option value="HEALTH">HEALTH</option>
+                  <option value="SPORTS">SPORTS</option>
+                  <option value="CAMPING">CAMPING</option>
+                  <option value="TRAVELLING">TRAVELLING</option>
+                </select>
+          </div>
+
+          <div class="form-group">
+              <label for="inputCouponMassege">Massege </label>
+              <input type="text" class="form-control" name="couponByEndDateMassege" required #couponByEndDateMassege="ngModel" id="couponByEndDateMassege-update" [(ngModel)]="updatedCoupon.massage" >
+          </div>
+          <div class="form-group">
+              <label for="inputCouponImage">Image </label>
+              <input type="text" class="form-control" name="couponByEndDateImage" required #couponByEndDateImage="ngModel" id="couponByEndDateImage-update" [(ngModel)]="updatedCoupon.image" >
+          </div>
+        
+          <button [disabled]="updataCouponBtnDisabled" type="submit" class="btn btn-primary" [disabled]="couponByEndDateTitle.invalid  || couponByEndDateStartDate.invalid  ||
+          couponByEndDateEndDate.invalid ||couponByEndDateAmount.invalid  ||couponByEndDateType.invalid  ||couponByEndDateMassege.invalid  ||couponByEndDateImage.invalid " data-toggle="collapse" data-target="#updateCouponByEndDateModalCenter" aria-controls="#updateCouponByEndDateModalCenter">Update</button>
+          
+        </form>
+    </div>
+  </div>
+<!-- update compny by EndDate collap end -->
+
+</div>
+
+              
               <!-- company income list start -->
       <div class="tab-pane fade show active" active id="v-pills-list-income" role="tabpanel" aria-labelledby="v-pills-list-income-tab">
             
@@ -237,8 +714,8 @@
             
           <!-- company income list start -->
        
+          <div *ngIf="companyIncomeListed && logInSuccess">
             <div class="card card-body">
-              <div *ngIf="companyIncomeListed && logInSuccess">
                 <div class="row">
                   <div class="col-sm">
                         actions Description 

@@ -18,7 +18,19 @@ export class CustomerHttpService {
 
  }
  
- companyLogOut(logInIdData){
+ customerLogOut(logInIdData){
  return this.customerHttp.post<any>(this.baseUrl+"/customerLogOut",logInIdData);
  }
+ customerPurechasCoupon(requestData){
+  return this.customerHttp.post<any>(this.baseUrl+"/purchaseCoupon",requestData);
+  }
+  listCustomrCoupon(requestData){
+    return this.customerHttp.post<any>(this.baseUrl+"/listAllCustomerCoupons",requestData);
+    }
+    listCustomrSpecificCoupon(requestData){
+      return this.customerHttp.post<any>(this.baseUrl+"/getCouponsByCouponTypeOrPrice",requestData);
+      }
+      getCoupons(){
+        return this.customerHttp.get<any>(this.baseUrl+"/getAllCoupon");
+      }
 }

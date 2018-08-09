@@ -1,17 +1,308 @@
 <h1>Customer Service</h1>
-<div class="logIn ">
-  <form #adminLogIn="ngForm" (ngSubmit)="onSubmit()" novalidate> 
-    <div >
-      <div class="form-group" >
-
-        <label for="inputUserName">User Name</label>
-        <input type="text" class="form-control" name="Name" required #name="ngModel" id="LogInUserName" [(ngModel)]="logInModel.userName" >
+<div class="logIn " [hidden]="logInSuccess">
+    <form #cusomerLogIn="ngForm" (ngSubmit)="onCustomerLogIn()" novalidate> 
+      
+      <div >
+        <div class="form-group" >
+  
+          <label for="inputUserName">User Name</label>
+          <input type="text" class="form-control" name="Name" required #name="ngModel" id="LogInUserName" [(ngModel)]="logInModel.userName" >
+        </div>
+        <div class="form-group" >
+            <label for="inputUserName">Password</label>
+            <input type="password" class="form-control" name="password" required #password="ngModel" id="LogInPassword" [(ngModel)]="logInModel.password" >
+        </div>
+           <button type="submit" class="btn btn-primary" [disabled]="name.invalid || name.untouched || password.invalid || logInBtnClickedDisabled " >logIn</button>
       </div>
-      <div class="form-group" >
-          <label for="inputUserName">Password</label>
-          <input type="password" class="form-control" name="password" required #password="ngModel" id="LogInPassword" [(ngModel)]="logInModel.password" >
-      </div>
-         <button type="submit" [disabled]="name.invalid || name.untouched || password.invalid" >logIn</button>
+    </form>
     </div>
-  </form>
+    <div>
+      <button (click)="customerLogOut()" [hidden]=!logInSuccess>log out</button>
+    </div>
+
+    <div class="row" [hidden]=!logInSuccess >
+        <div class="col-3">
+          <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link" id="v-pills-purchase-coupon-tab" (click)="listAllCoupons();" data-toggle="pill" href="#v-pills-purchase-coupon" role="tab" aria-controls="v-pills-purchase-coupon" aria-selected="true">Coupons</a>
+            <a class="nav-link" id="v-pills-get-my-coupon-tab"(click)="listMyCoupons();activateGetMyCoupon() " data-toggle="pill" href="#v-pills-get-my-coupon" role="tab" aria-controls="v-pills-get-my-coupon" aria-selected="false">My Coupons  </a>
+            <a class="nav-link" id="v-pills-get-coupon-by-type-tab" (click)="activateGetMyCouponByType() " data-toggle="pill" href="#v-pills-get-coupon-by-type" role="tab" aria-controls="v-pills-get-coupon-by-type" aria-selected="false">coupons by type</a>
+            <a class="nav-link" id="v-pills-get-coupon-by-price-tab" (click)="activateGetMyCouponByPrice() " data-toggle="pill" href="#v-pills-get-coupon-by-price" role="tab" aria-controls="v-pills-get-coupon-by-price" aria-selected="false">coupons by price</a>
+          </div>
+        </div>
+        <div class="col-9">
+            <div class="tab-content" id="v-pills-tabContent">
+              <div class="tab-pane fade show active" active id="v-pills-purchase-coupon" role="tabpanel" aria-labelledby="v-pills-purchase-coupon-tab">
+              
+              <!-- coupon cards start -->
+              <div *ngIf="logInSuccess && couponsListed ">
+                <div class="card text-center" id="couponId"  *ngFor="let coupon of couponList" >
+                    <div class="card-header" >
+                     Coupon title :  {{coupon.title}}
+                    </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-4">
+                          Coupon Start date : {{coupon.startDate}}
+                        </div>
+                        <div class="col-4">
+                          Coupon End Date : {{coupon.endDate}}
+                          </div>
+                          <div class="col-4">
+                          Coupon Price : {{coupon.price}}
+                            </div>  
+
+                      </div>
+                      <div class="row">
+                            <div class="col-4">
+                            Coupon Type : {{coupon.couponType}}
+                            </div>
+                            <div class="col-4">
+                            Coupon Amount : {{coupon.amount}}
+                            </div>
+                            <div class="col-12">
+                            Massege : {{coupon.massage}} 
+                            </div> 
+                        </div>
+                      
+                      <a (click)="saveCouponForPurchase(coupon)"  class="btn btn-primary" data-toggle="modal" data-target="#purchaseCouponModalCenter">Purchase Coupon</a>
+                      
+                      
+                    
+                    </div>
+                    <div class="card-footer text-muted">
+                     
+                    </div>
+                  </div>
+                  
+               </div>
+            
+        <!-- coupon cards end -->
+
+<!-- Modal start -->
+<div class="modal fade" id="purchaseCouponModalCenter" tabindex="-1" role="dialog" aria-labelledby="purchaseCouponModalCenterTitle" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal-content">
+  <div class="modal-header">
+    <h5 class="modal-title" id="purchaseCouponModalCenterTitle">Delete Coupon</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
+  <div class="modal-body">
+   do you want to purchase this Coupon ?
+   
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    <button type="button" (click)=purchaseCoupon() class="btn btn-primary" data-dismiss="modal">Purchase</button>
+  </div>
+</div>
+</div>
+</div>
+<!-- Modal end -->
+              
+              
+              
+              </div>  
+
+              <div class="tab-pane fade show active" active id="v-pills-get-my-coupon" role="tabpanel" aria-labelledby="v-pills-get-my-coupon-tab">
+                 <!-- coupon cards start -->
+              <div *ngIf="logInSuccess && myCouponsListed && getMyCouponActivate ">
+                  <div class="card text-center" id="myCouponId"  *ngFor="let coupon of myCouponsList" >
+                      <div class="card-header" >
+                       Coupon title :  {{coupon.title}}
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-4">
+                            Coupon Start date : {{coupon.startDate}}
+                          </div>
+                          <div class="col-4">
+                            Coupon End Date : {{coupon.endDate}}
+                            </div>
+                            <div class="col-4">
+                            Coupon Price : {{coupon.price}}
+                              </div>  
+  
+                        </div>
+                        <div class="row">
+                              <div class="col-4">
+                              Coupon Type : {{coupon.couponType}}
+                              </div>
+                              <div class="col-4">
+                              Coupon Amount : {{coupon.amount}}
+                              </div>
+                              <div class="col-12">
+                              Massege : {{coupon.massage}} 
+                              </div> 
+                              <div class="col-12">
+                              Image : {{coupon.image}} 
+                              </div> 
+                          </div>
+                        
+                        
+                        
+                      
+                      </div>
+                      <div class="card-footer text-muted">
+                       
+                      </div>
+                    </div>
+                    
+                 </div>
+              
+          <!-- coupon cards end -->
+             
+              </div> 
+
+
+
+
+              <div class="tab-pane fade show active" active id="v-pills-get-coupon-by-type" role="tabpanel" aria-labelledby="v-pills-get-coupon-by-type-tab">
+
+                  <div *ngIf="logInSuccess  && getMyCouponByTypeActivate">
+                      {{typeOfTheCoupon | json}}
+                      <form #searchByCouponTypeForm="ngForm" (ngSubmit)="listMyCouponByType()" novalidate>
+                          <div class="form-row align-items-center">
+                              Chose coupon type :
+                            <div class="col-auto my-1">
+                             
+                              <select class="custom-select mr-sm-2" name="couponType" required  #couponType="ngModel" id="couponType-search" [(ngModel)]="typeOfTheCoupon.couponType">
+                                    
+                                  <option value="RESTURANS" selected>RESTURANS</option>
+                                  <option value="ELECTRICITY">ELECTRICITY</option>
+                                  <option value="FOOD">FOOD</option>
+                                  <option value="HEALTH">HEALTH</option>
+                                  <option value="SPORTS">SPORTS</option>
+                                  <option value="CAMPING">CAMPING</option>
+                                  <option value="TRAVELLING">TRAVELLING</option>
+                                </select>
+                            </div>
+                           
+                            <div class="col-auto my-1">
+                              <button type="submit" [disabled]="couponType.invalid" class="btn btn-primary">Search</button>
+                            </div>
+                          </div>
+                        </form>  
+                      </div>
+
+
+                  <!-- coupon cards start -->
+               <div *ngIf="logInSuccess && myCouponsListedByType ">
+                   <div class="card text-center" id="myCouponId"  *ngFor="let coupon of myCouponsListByType" >
+                       <div class="card-header" >
+                        Coupon title :  {{coupon.title}}
+                       </div>
+                       <div class="card-body">
+                         <div class="row">
+                           <div class="col-4">
+                             Coupon Start date : {{coupon.startDate}}
+                           </div>
+                           <div class="col-4">
+                             Coupon End Date : {{coupon.endDate}}
+                             </div>
+                             <div class="col-4">
+                             Coupon Price : {{coupon.price}}
+                               </div>  
+   
+                         </div>
+                         <div class="row">
+                               <div class="col-4">
+                               Coupon Type : {{coupon.couponType}}
+                               </div>
+                               <div class="col-4">
+                               Coupon Amount : {{coupon.amount}}
+                               </div>
+                               <div class="col-12">
+                               Massege : {{coupon.massage}} 
+                               </div> 
+                               <div class="col-12">
+                               Image : {{coupon.image}} 
+                               </div> 
+                           </div>
+                         
+                         
+                         
+                       
+                       </div>
+                       <div class="card-footer text-muted">
+                        
+                       </div>
+                     </div>
+                     
+                  </div>
+               
+           <!-- coupon cards end -->
+              
+               </div> 
+
+
+               <div class="tab-pane fade show active" active id="v-pills-get-coupon-by-price" role="tabpanel" aria-labelledby="v-pills-get-coupon-by-price-tab">
+
+                  <div *ngIf="logInSuccess  && getMyCouponByPriceActivate">
+                      {{priceOfTheCoupon | json}}
+                      <form #searchByCouponPriceForm="ngForm" (ngSubmit)="listMyCouponByPrice()" novalidate>
+                          <div class="form-row align-items-center">
+                            <div class="col-auto my-1">
+                                Enter coupon Price :
+                              <input type="number" name="couponPrice" required  #couponPrice="ngModel" id="couponPrice-search" [(ngModel)]="priceOfTheCoupon.price">
+                            </div>
+                           
+                            <div class="col-auto my-1">
+                              <button type="submit" [disabled]="couponPrice.invalid" class="btn btn-primary">Search</button>
+                            </div>
+                          </div>
+                        </form>    
+                      </div>
+
+
+                  <!-- coupon cards start -->
+               <div *ngIf="logInSuccess && myCouponsListedByPrice ">
+                   <div class="card text-center" id="myCouponId"  *ngFor="let coupon of myCouponsListByPrice" >
+                       <div class="card-header" >
+                        Coupon title :  {{coupon.title}}
+                       </div>
+                       <div class="card-body">
+                         <div class="row">
+                           <div class="col-4">
+                             Coupon Start date : {{coupon.startDate}}
+                           </div>
+                           <div class="col-4">
+                             Coupon End Date : {{coupon.endDate}}
+                             </div>
+                             <div class="col-4">
+                             Coupon Price : {{coupon.price}}
+                               </div>  
+   
+                         </div>
+                         <div class="row">
+                               <div class="col-4">
+                               Coupon Type : {{coupon.couponType}}
+                               </div>
+                               <div class="col-4">
+                               Coupon Amount : {{coupon.amount}}
+                               </div>
+                               <div class="col-12">
+                               Massege : {{coupon.massage}} 
+                               </div> 
+                               <div class="col-12">
+                               Image : {{coupon.image}} 
+                               </div> 
+                           </div>
+                         
+                         
+                         
+                       
+                       </div>
+                       <div class="card-footer text-muted">
+                        
+                       </div>
+                     </div>
+                     
+                  </div>
+               
+           <!-- coupon cards end -->
+              
+               </div>
+            </div>
+        </div>

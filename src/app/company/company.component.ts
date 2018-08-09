@@ -2,6 +2,7 @@ import { Component, OnInit} from '@angular/core';
 import { LogInData } from '../log-in-data';
 import { CompanyHttpService } from '../company-http.service';
 import { Coupon } from '../coupon';
+import { SerchDataForCoupons } from '../serch-data-for-coupons';
 
 @Component({
   selector: 'app-company',
@@ -37,16 +38,32 @@ export class CompanyComponent implements OnInit {
     creatCouponMassegeError=false;
     couponsList={};
     couponsListed=false;
+    specificByTypeCouponsList={};
+    specificByTypeCouponsListed=false;
+
+
+
     timpCoupon={};
     updatedCoupon={};
     updataCouponBtnDisabled=false;
+    serchDataForCoupons=new SerchDataForCoupons(null,null,null)
+    serchDataForCouponsByPrice=new SerchDataForCoupons(null,null,null)
+    serchDataForCouponsByEndDate=new SerchDataForCoupons(null,null,null)
+    specificByPriceCouponsList={};
+    specificByPriceCouponsListed=false;
+    specificByEndDateCouponsList={};
+    specificByEndDateCouponsListed=false;
+    activateGetCouponByPriceTab=false;
+    activateGetCouponByTypeTab=false;
+    activateGetCouponByEndDateTab=false;
 
    // company income
    companyIncomeList={};
    companyIncomeListed=false;
+   
 
   // log in function
-  onSubmit(LogInData){
+  onSubmit(){
     this.logInBtnClickedDisabled=true;
     console.log(this.logInId);
  this.companyHttpServic.companyLogIn(this.logInModel)
@@ -60,7 +77,7 @@ export class CompanyComponent implements OnInit {
     
     this.logInResponseMassege= data.response.logInResponseMassege;
     
-    if (this.logInResponseMassege==="LOGINSUCCESS" || this.logInResponseMassege==="ALREADYLOGINEDIN") {
+    if (this.logInResponseMassege==="LOGINSUCCESS" || this.logInResponseMassege==="ALREADYLOGGEDIN") {
       this.logInSuccess = true;
       this.logInId = data.response.id;
     }
@@ -126,8 +143,10 @@ let requestData=
   clientId:this.logInId
 
 }
+
 this.companyHttpServic.listAllCoupons(requestData)
 .subscribe(data=>this.listAllCouponsData(data));
+
 
 
 }
@@ -156,7 +175,7 @@ onUpdateCoupon(){
   this.companyHttpServic.updateCoupon(requestData)
   .subscribe(data => this.onUpdateCouponData(data))
 }
-onUpdateCouponData(data){
+private onUpdateCouponData(data){
   console.log(data);
   this.updataCouponBtnDisabled=false
   
@@ -189,7 +208,7 @@ listAllCompanyIncome(){
   this.companyHttpServic.getCompanyIncome(requestData)
   .subscribe(data => this.listAllCompanyIncomeData(data))
 }
-listAllCompanyIncomeData(data){
+private listAllCompanyIncomeData(data){
   console.log(data);
   
   this.companyIncomeList=data.response;
@@ -197,4 +216,62 @@ listAllCompanyIncomeData(data){
 }
 
 // get spicific coupon TODO
+listSpecificCouponsByType(){
+  
+  
+  let requestData={
+    clientId:this.logInId,
+    specificCouponData:this.serchDataForCoupons
+  }
+  this.companyHttpServic.getSpecificCoupons(requestData)
+  .subscribe(data=>this.listSpecificCouponsData(data));
+}
+private listSpecificCouponsData(data){
+  this.specificByTypeCouponsList=data.response;
+   this.specificByTypeCouponsListed=true;
+}
+
+listSpecificCoouponsByPrice(){
+  
+  let requestData={
+    clientId:this.logInId,
+    specificCouponData:this.serchDataForCouponsByPrice
+  }
+  this.companyHttpServic.getSpecificCoupons(requestData)
+  .subscribe(data=>this.listSpecificCouponsByPriceData(data));
+}
+private listSpecificCouponsByPriceData(data){
+  this.specificByPriceCouponsList=data.response;
+   this.specificByPriceCouponsListed=true;
+}
+listSpecificCoouponsByEndDate(){
+  this.activateSearchTabs(false,false,true);
+  let requestData={
+    clientId:this.logInId,
+    specificCouponData:this.serchDataForCouponsByEndDate
+  }
+  this.companyHttpServic.getSpecificCoupons(requestData)
+  .subscribe(data=>this.listSpecificCouponsByEndDateData(data));
+}
+private listSpecificCouponsByEndDateData(data){
+  this.specificByEndDateCouponsList=data.response;
+   this.specificByEndDateCouponsListed=true;
+}
+
+activateSearchByType(){
+  this.activateSearchTabs(true,false,false);
+}
+activateSearchByPrice(){
+  this.activateSearchTabs(false,true,false);
+}
+activateSearchByEndDate(){
+  this.activateSearchTabs(false,false,true);
+}
+
+activateSearchTabs(isByTypeSearch:boolean,isByPriceSearch:boolean,isByEndDateSearch:boolean){
+  this.activateGetCouponByPriceTab=isByPriceSearch;
+    this.activateGetCouponByTypeTab=isByTypeSearch;
+    this.activateGetCouponByEndDateTab=isByEndDateSearch;
+
+}
 }
