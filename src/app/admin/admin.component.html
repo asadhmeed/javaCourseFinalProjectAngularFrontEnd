@@ -1,370 +1,431 @@
+<h1>
 
 
+  Admin Service</h1>
 
-<h1 >Admin Service</h1>
-{{logInModel | json}}
 
-{{logInId | json}}
+<!-- customer log in form start -->
 <div class="logIn " [hidden]="logInSuccess">
-    <form #adminLogIn="ngForm" (ngSubmit)="onSubmit()" novalidate> 
-      
-      <div >
-        <div class="form-group" >
-  
-          <label for="inputUserName">User Name</label>
-          <input type="text" class="form-control" name="Name" required #name="ngModel" id="LogInUserName" [(ngModel)]="logInModel.userName" >
-        </div>
-        <div class="form-group" >
-            <label for="inputUserName">Password</label>
-            <input type="password" class="form-control" name="password" required #password="ngModel" id="LogInPassword" [(ngModel)]="logInModel.password" >
-        </div>
-           <button type="submit" class="btn btn-primary" [disabled]="name.invalid || name.untouched || password.invalid || logInBtnClickedDisabled " >logIn</button>
-      </div>
-    </form>
-    </div>
+  <form #adminLogIn="ngForm" (ngSubmit)="onSubmit()" novalidate>
+
     <div>
-      <button (click)="adminLogOut()" [hidden]=!logInSuccess>log out</button>
+
+      <div class="form-group">
+
+        <label for="inputUserName">User Name</label>
+        <input type="text" class="form-control" [class.is-invalid]="name.invalid && name.touched" name="Name" required #name="ngModel"
+          id="LogInUserName" [(ngModel)]="logInModel.userName">
+        <small class="text-danger" [class.d-none]="name.valid || name.untouched ">user name is required</small>
+
+      </div>
+      <div class="form-group">
+        <label for="inputUserName">Password</label>
+        <input type="password" class="form-control" [class.is-invalid]="password.invalid && password.touched" name="password" required
+          #password="ngModel" id="LogInPassword" [(ngModel)]="logInModel.password">
+        <small class="text-danger" [class.d-none]="password.valid || password.untouched ">password is required</small>
+
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="name.invalid || name.untouched || password.invalid || logInBtnClickedDisabled ">logIn</button>
+      <div>
+
+        <small class="text-danger" [class.d-none]="!logInFailed ">log in failed wrong user name or password</small>
+      </div>
+
     </div>
+  </form>
+</div>
+<div>
+  <button (click)="adminLogOut()" [hidden]=!logInSuccess>log out</button>
+</div>
+<!-- admin log in form  end -->
 
 <div class="row" [hidden]="!logInSuccess">
-    <div class="col-3">
-      <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <a class="nav-link" id="v-pills-creat-tab"  data-toggle="pill" href="#v-pills-creat" role="tab" aria-controls="v-pills-creat" aria-selected="true">Creat Company</a>
-        <a class="nav-link" id="v-pills-creat-customer-tab" data-toggle="pill" href="#v-pills-creat-customer" role="tab" aria-controls="v-pills-creat-customer" aria-selected="false">Creat Customer</a>
-        <a class="nav-link" id="v-pills-profile-tab"(click)="listAllCompany()" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Companies Updates </a>
-        <a class="nav-link" id="v-pills-customers-list-tab" (click)="listAllCustomers()" data-toggle="pill" href="#v-pills-customers-list" role="tab" aria-controls="v-pills-customers-list" aria-selected="false">Customers Updates</a>
-        <a class="nav-link" id="v-pills-income-list-tab" (click)="listAllIncome()" data-toggle="pill" href="#v-pills-income-list" role="tab" aria-controls="v-pills-income-list" aria-selected="false">Income Table</a>
-      </div>
+  <div class="col-3">
+    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+      <a class="nav-link" id="v-pills-creat-tab" data-toggle="pill" href="#v-pills-creat" role="tab" aria-controls="v-pills-creat"
+        aria-selected="true">Creat Company</a>
+      <a class="nav-link" id="v-pills-creat-customer-tab" data-toggle="pill" href="#v-pills-creat-customer" role="tab" aria-controls="v-pills-creat-customer"
+        aria-selected="false">Creat Customer</a>
+      <a class="nav-link" id="v-pills-profile-tab" (click)="listAllCompany()" data-toggle="pill" href="#v-pills-profile" role="tab"
+        aria-controls="v-pills-profile" aria-selected="false">Companies Updates </a>
+      <a class="nav-link" id="v-pills-customers-list-tab" (click)="listAllCustomers()" data-toggle="pill" href="#v-pills-customers-list"
+        role="tab" aria-controls="v-pills-customers-list" aria-selected="false">Customers Updates</a>
+      <a class="nav-link" id="v-pills-income-list-tab" (click)="listAllIncome()" data-toggle="pill" href="#v-pills-income-list"
+        role="tab" aria-controls="v-pills-income-list" aria-selected="false">Income Table</a>
     </div>
-    <div class="col-9">
-      <div class="tab-content" id="v-pills-tabContent">
-        <div class="tab-pane fade show active" active id="v-pills-creat" role="tabpanel" aria-labelledby="v-pills-creat-tab">
-          <div *ngIf="logInSuccess  ;else elseMassege">
-          {{company | json}}
-          <form #adminCreatCompany="ngForm" (ngSubmit)="onCreatCompany()" novalidate><!--creat company-->
+  </div>
+  <div class="col-9">
+    <div class="tab-content" id="v-pills-tabContent">
+
+      <div class="tab-pane fade show active" active id="v-pills-creat" role="tabpanel" aria-labelledby="v-pills-creat-tab">
+        <div *ngIf="logInSuccess  ;else elseMassege">
+
+          <form #adminCreatCompany="ngForm" (ngSubmit)="onCreatCompany()" novalidate>
+            <!--creat company-->
             <div class="form-group">
-                <label for="inputCompanyName">Company Name</label>
-                <input type="text" class="form-control" name="companyName" #companyName="ngModel" required id="companyName-creat" [(ngModel)]="company.companyName" >
+              <label for="inputCompanyName">Company Name</label>
+              <input type="text" class="form-control" [class.is-invalid]="companyName.invalid && companyName.touched" name="companyName"
+                #companyName="ngModel" required id="companyName-creat" [(ngModel)]="company.companyName">
+              <small class="text-danger" [class.d-none]="companyName.valid || companyName.untouched ">company name is required</small>
+
             </div>
             <div class="form-group">
-                <label for="inputCompanyPassword">Email</label>
-                <input type="Email" class="form-control" name="companyEmail" required email #companyEmail="ngModel" id="companyEmail-creat" [(ngModel)]="company.email"  >
+              <label for="inputCompanyPassword">Email</label>
+              <input type="Email" class="form-control" [class.is-invalid]="companyEmail.invalid && companyEmail.touched" name="companyEmail"
+                required email #companyEmail="ngModel" id="companyEmail-creat" [(ngModel)]="company.email">
+              <small class="text-danger" [class.d-none]="companyEmail.valid || companyEmail.untouched ">company email is required</small>
+
             </div>
             <div class="form-group">
-                <label for="inputCompanyPassword">Password</label>
-                <input type="password" class="form-control" name="companyPassword" required #companyPassword="ngModel" id="companyPassword-creat" [(ngModel)]="company.password" >
+              <label for="inputCompanyPassword">Password</label>
+              <input type="password" class="form-control" [class.is-invalid]="companyPassword.invalid && companyPassword.touched" name="companyPassword"
+                required #companyPassword="ngModel" id="companyPassword-creat" [(ngModel)]="company.password">
+              <small class="text-danger" [class.d-none]="companyPassword.valid || companyPassword.untouched ">company password is required</small>
             </div>
-          
+
             <button [disabled]="creatCompanyBtnClickedDisabled" type="submit" class="btn btn-primary" [disabled]="companyName.invalid || companyName.untouched || companyEmail.invalid || companyEmail.untouched || companyPassword.invalid ">Creat</button>
-            
+            <div>
+              <small class="text-danger" [class.d-none]="!companyCreatedFailed ">name of the company is already used</small>
+              <small class="text-success" [class.d-none]="!companyCreatedSuccess">company created successfully</small>
+            </div>
+
           </form>
         </div>
-             <ng-template #elseMassege>
-                <div >log in to do this task</div>
-             </ng-template>
+        <ng-template #elseMassege>
+          <div>log in to do this task</div>
+        </ng-template>
+      </div>
+      <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+        <!-- show list of companies start -->
+        <div *ngIf="logInSuccess && companiesListed ;else elseMassege">
+          <div class="card text-center" id="companyId" *ngFor="let company of companies">
+            <div class="card-header">
+              Company Name : {{company.companyName}}
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">{{company.email}}</h5>
+
+              <a (click)="saveCompanyForDelete(company)" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Delete</a>
+              <a (click)="saveCompanyForDelete(company)" class="btn btn-primary" data-toggle="collapse" data-target="#updateCompanyModalCenter"
+                aria-controls="#updateCompanyModalCenter">Update</a>
+              <a (click)="listCompanyIncome(company)" class="btn btn-primary" data-toggle="collapse" data-target="#companyIncomeModalCenter"
+                aria-controls="#companyIncomeModalCenter">Show Income</a>
+
+
+            </div>
+            <div class="card-footer text-muted">
+
+            </div>
+          </div>
+
         </div>
-        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
-          <div *ngIf="logInSuccess && companiesListed ;else elseMassege">
-            <div class="card text-center" id="companyId"  *ngFor="let company of companies" >
-                <div class="card-header" >
-                 Company Name :  {{company.companyName}}
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title">{{company.email}}</h5>
-                  
-                  <a (click)="saveCompanyForDelete(company)" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Delete</a>
-                  <a (click)="saveCompanyForDelete(company)" class="btn btn-primary" data-toggle="collapse"data-target="#updateCompanyModalCenter" aria-controls="#updateCompanyModalCenter">Update</a>
-                  <a (click)="listCompanyIncome(company)" class="btn btn-primary" data-toggle="collapse"data-target="#companyIncomeModalCenter" aria-controls="#companyIncomeModalCenter">Show Income</a>
-                
-                
-                </div>
-                <div class="card-footer text-muted">
-                
-                </div>
+        <!-- show list of companies end -->
+        <ng-template #elseMassege>
+          <div>log in to do this task</div>
+        </ng-template>
+      </div>
+
+
+      <!--ask if to delete company Modal start-->
+      <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalCenterTitle">Delete company</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              do you want to delete this company ?
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" (click)=deleteCompnay() class="btn btn-primary" data-dismiss="modal">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ask if to delete company modal end -->
+
+      <!-- Update company start -->
+      <div class="collapse" id="updateCompanyModalCenter">
+        <div class="card card-body">
+          <form #adminUpdateCompany="ngForm" (ngSubmit)="onUpdateCompany()" novalidate>
+
+            <div class="form-group">
+              <label for="updateCompanyName">Company Name</label>
+              <input type="text" disabled class="form-control" [class.is-invalid]="companyNameUpdate.invalid && companyNameUpdate.touched"
+                name="companyNameUpdate" #companyNameUpdate="ngModel" required id="companyName-update" [(ngModel)]="updatedCompany.companyName">
+              <small class="text-danger" [class.d-none]="companyNameUpdate.valid || companyNameUpdate.untouched ">company name is required</small>
+            </div>
+            <div class="form-group">
+              <label for="updateCompanyPassword">Email</label>
+              <input type="Email" class="form-control" [class.is-invalid]="companyEmailUpdate.invalid && companyEmailUpdate.touched" name="companyEmailUpdate"
+                required email #companyEmailUpdate="ngModel" id="companyEmail-update" [(ngModel)]="updatedCompany.email">
+              <small class="text-danger" [class.d-none]="companyEmailUpdate.valid || companyEmailUpdate.untouched ">company email is required</small>
+            </div>
+            <div class="form-group">
+              <label for="updateCompanyPassword">Password</label>
+              <input type="password" class="form-control" [class.is-invalid]="companyPasswordUpdate.invalid && companyPasswordUpdate.touched"
+                name="companyPasswordUpdate" required #companyPasswordUpdate="ngModel" id="companyPassword-update" [(ngModel)]="updatedCompany.password">
+              <small class="text-danger" [class.d-none]="companyPasswordUpdate.valid || companyPasswordUpdate.untouched ">company password is required</small>
+            </div>
+
+            <button [disabled]="updateCompanyBtnClickedDisabled" type="submit" class="btn btn-primary" [disabled]="  companyEmailUpdate.invalid ||  companyPasswordUpdate.invalid "
+              aria-controls="#updateCompanyModalCenter" data-toggle="collapse" data-target="#updateCompanyModalCenter" aria-controls="#updateCompanyModalCenter">Update</button>
+
+          </form>
+
+        </div>
+      </div>
+      <!-- Update company end -->
+
+      <!-- company income list start -->
+      <div class="collapse" id="companyIncomeModalCenter">
+        <div class="card card-body">
+          <div *ngIf="companyIncomeListed && logInSuccess">
+            <div class="row">
+              <div class="col-sm">
+                actions Description
               </div>
-              
+              <div class="col-sm">
+                amount
+              </div>
+
+            </div>
+            <div class="container" *ngFor="let income of companyIncomeList">
+              <div class="row">
+                <div class="col-sm">
+                  <div *ngIf="income.descrption === 'COMPANY_NEW_COUPON' else  elseMassege ">
+                    {{income.name}} creat new coupon
+                  </div>
+                  <ng-template #elseMassege>
+                    {{income.name}} update coupon
+
+                  </ng-template>
+                </div>
+                <div class="col-sm">
+                  {{income.amount}}
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- company income list end -->
+
+
+      <!-- customers  -->
+
+      <div class="tab-pane fade" id="v-pills-creat-customer" role="tabpanel" aria-labelledby="v-pills-creat-customer-tab">
+        <!-- creat customer form start -->
+        <div *ngIf="logInSuccess  ;else elseMassege">
+
+          <form #adminCreatCompany="ngForm" (ngSubmit)="onCreatCustomer()" novalidate>
+            <!--creat company-->
+            <div class="form-group">
+              <label for="inputCustomerName">Customer Name</label>
+              <input type="text" class="form-control" [class.is-invalid]="customerName.invalid && customerName.touched" name="customerName"
+                #customerName="ngModel" required id="customerName-creat" [(ngModel)]="customer.name">
+              <small class="text-danger" [class.d-none]="customerName.valid || customerName.untouched ">customer name is required</small>
+
+            </div>
+
+            <div class="form-group">
+              <label for="inputCustomerPassword">Password</label>
+              <input type="password" class="form-control" name="customerPassword" required #customerPassword="ngModel" id="customerPassword-creat"
+                [(ngModel)]="customer.password">
+              <small class="text-danger" [class.d-none]="customerPassword.valid || customerPassword.untouched ">customer password is required</small>
+
+            </div>
+
+            <button type="submit" [disabled]="creatCustomerBtnClickedDisabled" class="btn btn-primary" [disabled]="customerName.invalid || customerName.untouched  || customerPassword.invalid  ">Creat</button>
+            <div>
+              <small class="text-danger" [class.d-none]="!customerCreatedFailed ">customer created failed name is already used</small>
+              <small class="text-success" [class.d-none]="!customerCreatedSuccess ">customer created successfully</small>
+
+            </div>
+          </form>
         </div>
         <ng-template #elseMassege>
-            <div >log in to do this task</div>
-          </ng-template>
+          <div>log in to do this task</div>
+        </ng-template>
+        <!-- creat customer form end -->
       </div>
-      
-        
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
+      <div class="tab-pane fade" id="v-pills-customers-list" role="tabpanel" aria-labelledby="v-pills-customers-list-tab">
+
+
+        <!-- show customer list Modal  start -->
+        <div *ngIf="logInSuccess && customersListed ;else elseMassege">
+          <div class="card text-center" id="customerId" *ngFor="let customer of customersList">
+            <div class="card-header">
+              Customer Name : {{customer.name}}
+            </div>
+            <div class="card-body">
+
+
+              <a (click)="saveCustomerForDeleteOrUpdate(customer)" class="btn btn-primary" data-toggle="modal" data-target="#deletCustomerModalCenter">Delete</a>
+              <a (click)="saveCustomerForDeleteOrUpdate(customer)" class="btn btn-primary" data-toggle="collapse" data-target="#updateCustomerModalCenter"
+                aria-controls="#updateCustomerModalCenter">Update</a>
+              <a (click)="listCustomerIncome(customer)" class="btn btn-primary" data-toggle="collapse" data-target="#customerIncomeModalCenter"
+                aria-controls="#customerIncomeModalCenter">Customer Income</a>
+
+
+            </div>
+            <div class="card-footer text-muted">
+
+            </div>
+          </div>
+
+        </div>
+        <ng-template #elseMassege>
+          <div>log in to do this task</div>
+        </ng-template>
+        <!-- show customer list Modal  end -->
+
+
+        <!-- ask if the client want to delete customer start -->
+        <div class="modal fade" id="deletCustomerModalCenter" tabindex="-1" role="dialog" aria-labelledby="deletCustomerModalCenterTitle"
+          aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenterTitle">Delete company</h5>
+                <h5 class="modal-title" id="deletCustomerModalCenterTitle">Delete Customer</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div class="modal-body">
-               do you want to delete this company ?
-               
+                do you want to delete this Customer ?
+
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" (click)=deleteCompnay() class="btn btn-primary" data-dismiss="modal">Delete</button>
+                <button type="button" (click)=onDeleteCustomer() class="btn btn-primary" data-dismiss="modal">Delete</button>
               </div>
             </div>
           </div>
         </div>
+        <!-- ask if the client want to delete customer end -->
 
+        <!--  customr update form collapsed card start -->
+        <div class="collapse" id="updateCustomerModalCenter">
+          <div class="card card-body">
+            <form #adminUpdateCustomer="ngForm" (ngSubmit)="onUpdateCustomer()" novalidate>
 
-        <!-- Update company start -->
-        <div class="collapse" id="updateCompanyModalCenter">
-            <div class="card card-body">
-                <form #adminUpdateCompany="ngForm" (ngSubmit)="onUpdateCompany()" novalidate>
-                    
-                     <div class="form-group">
-                         <label for="updateCompanyName">Company Name</label>
-                         <input type="text" disabled class="form-control" name="companyNameUpdate" #companyNameUpdate="ngModel" required id="companyName-update" [(ngModel)]="updatedCompany.companyName" >
-                     </div>
-                     <div class="form-group">
-                         <label for="updateCompanyPassword">Email</label>
-                         <input type="Email" class="form-control" name="companyEmailUpdate" required email #companyEmailUpdate="ngModel" id="companyEmail-update" [(ngModel)]="updatedCompany.email"  >
-                     </div>
-                     <div class="form-group">
-                         <label for="updateCompanyPassword">Password</label>
-                         <input type="password" class="form-control" name="companyPasswordUpdate" required #companyPasswordUpdate="ngModel" id="companyPassword-update" [(ngModel)]="updatedCompany.password" >
-                     </div>
-                    {{companyEmailUpdate.invalid }} {{companyPasswordUpdate.invalid}}
-                     <button [disabled]="updateCompanyBtnClickedDisabled" type="submit" class="btn btn-primary" [disabled]="  companyEmailUpdate.invalid ||  companyPasswordUpdate.invalid "  aria-controls="#updateCompanyModalCenter"
-                     data-toggle="collapse"data-target="#updateCompanyModalCenter" aria-controls="#updateCompanyModalCenter">Update</button>
+              <!-- Update customer -->
+              <div class="form-group">
+                <label for="updateCustomerName">Customer Name</label>
+                <input type="text" disabled class="form-control" name="customerNameUpdate" #CustomerNameUpdate="ngModel" required id="customerName-update"
+                  [(ngModel)]="updatedCustomer.name">
+              </div>
+              <div class="form-group">
+                <label for="updateCompanyPassword">Password</label>
+                <input type="password" class="form-control" [class.is-invalid]="customerPasswordUpdate.invalid && customerPasswordUpdate.touched"
+                  name="customerPasswordUpdate" required #customerPasswordUpdate="ngModel" id="customerPassword-update" [(ngModel)]="updatedCustomer.password">
+                <small class="text-danger" [class.d-none]="customerPasswordUpdate.valid || customerPasswordUpdate.untouched ">customer password is required</small>
 
-                   </form>
+              </div>
 
-            </div>
+              <button [disabled]="updateCustomerBtnClickedDisabled" type="submit" class="btn btn-primary" [disabled]="  customerPasswordUpdate.invalid "
+                data-toggle="collapse" data-target="#updateCustomerModalCenter" aria-controls="#updateCustomerModalCenter">Update</button>
+
+            </form>
           </div>
-          <!-- Update company end -->
+        </div>
+        <!-- customr  update form collapsed card end -->
 
-          <!-- company income list start -->
-        <div class="collapse" id="companyIncomeModalCenter">
-            <div class="card card-body">
-              <div *ngIf="companyIncomeListed && logInSuccess">
+
+
+        <!-- customr income list start-->
+        <div class="collapse" id="customerIncomeModalCenter">
+          <div class="card card-body">
+            <div *ngIf="customerIncomeListed && logInSuccess ">
+              <div class="row">
+                <div class="col-sm">
+                  actions Description
+                </div>
+                <div class="col-sm">
+                  amount
+                </div>
+
+              </div>
+              <div class="container" *ngFor="let income of customerIncomeList">
                 <div class="row">
                   <div class="col-sm">
-                      actions Description 
+                    <div *ngIf="income.descrption === 'CUSTOMER_PURCHASE'  ">
+                      {{income.name}} purchase coupon
+                    </div>
+
                   </div>
-                    <div class="col-sm">
-                        amount
-                    </div>
-                      
-                    </div>
-                <div class="container" *ngFor="let income of companyIncomeList">
-                  <div class="row" >
-                    <div class="col-sm" >  
-                      <div *ngIf="income.descrption === 'COMPANY_NEW_COUPON' else  elseMassege ">
-                      {{income.name}} creat new coupon
-                    </div>
-                      <ng-template  #elseMassege>
-                          {{income.name}} update  coupon  
-  
-                        </ng-template>
-                    </div>
-                      <div class="col-sm" >
-                        {{income.amount}}
-                      </div>
-                      
-                      
-                    </div>
+                  <div class="col-sm">
+                    {{income.amount}}
                   </div>
+
+
                 </div>
+              </div>
             </div>
           </div>
-        <!-- company income list end -->
-
-
-          <!-- customers  -->
-       
-        <div class="tab-pane fade" id="v-pills-creat-customer" role="tabpanel" aria-labelledby="v-pills-creat-customer-tab">
-          <!-- creat customer form start -->
-          <div *ngIf="logInSuccess  ;else elseMassege">
-                {{customer | json}}
-                <form #adminCreatCompany="ngForm" (ngSubmit)="onCreatCustomer()" novalidate><!--creat company-->
-                  <div class="form-group">
-                      <label for="inputCustomerName">Customer Name</label>
-                      <input type="text" class="form-control" name="customerName" #customerName="ngModel" required id="customerName-creat" [(ngModel)]="customer.name" >
-                  </div>
-                  
-                  <div class="form-group">
-                      <label for="inputCustomerPassword">Password</label>
-                      <input type="password" class="form-control" name="customerPassword" required #customerPassword="ngModel" id="customerPassword-creat" [(ngModel)]="customer.password" >
-                  </div>
-                
-                  <button  type="submit" [disabled]="creatCustomerBtnClickedDisabled" class="btn btn-primary" [disabled]="customerName.invalid || customerName.untouched  || customerPassword.invalid  ">Creat</button>
-                  
-                </form>
-              </div>
-              <ng-template #elseMassege>
-                  <div >log in to do this task</div>
-                </ng-template>
-        <!-- creat customer form end -->     
         </div>
+        <!-- customr income list end-->
 
-        <div class="tab-pane fade" id="v-pills-customers-list" role="tabpanel" aria-labelledby="v-pills-customers-list-tab">
-          
-          
-          <!-- Modal card customer start -->
-            <div *ngIf="logInSuccess && customersListed ;else elseMassege">
-                <div class="card text-center" id="customerId"  *ngFor="let customer of customersList" >
-                    <div class="card-header" >
-                     Customer Name :  {{customer.name}}
-                    </div>
-                    <div class="card-body">
-                      
-                      
-                      <a (click)="saveCustomerForDeleteOrUpdate(customer)" class="btn btn-primary" data-toggle="modal" data-target="#deletCustomerModalCenter">Delete</a>
-                      <a (click)="saveCustomerForDeleteOrUpdate(customer)" class="btn btn-primary" data-toggle="collapse"data-target="#updateCustomerModalCenter" aria-controls="#updateCustomerModalCenter">Update</a>
-                      <a (click)="listCustomerIncome(customer)" class="btn btn-primary" data-toggle="collapse"data-target="#customerIncomeModalCenter" aria-controls="#customerIncomeModalCenter">Customer Income</a>
-                    
-                    
-                    </div>
-                    <div class="card-footer text-muted">
-                     
-                    </div>
-                  </div>
-                  
-            </div>
-            <ng-template #elseMassege>
-                <div >log in to do this task</div>
-              </ng-template>
-          <!-- Modal card customer end -->
-          
-            
-            <!-- Modal delete customer start -->
-            <div class="modal fade" id="deletCustomerModalCenter" tabindex="-1" role="dialog" aria-labelledby="deletCustomerModalCenterTitle" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="deletCustomerModalCenterTitle">Delete Customer</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                   do you want to delete this Customer ?
-                   
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" (click)=onDeleteCustomer() class="btn btn-primary" data-dismiss="modal">Delete</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Modal delete customer end -->
 
-            <!-- updata customr update collapsed card start -->
-            <div class="collapse" id="updateCustomerModalCenter">
-              <div class="card card-body">
-                <form #adminUpdateCustomer="ngForm" (ngSubmit)="onUpdateCustomer()" novalidate>
-                  
-                  <!-- Update company -->
-                  <div class="form-group">
-                    <label for="updateCustomerName">Customer Name</label>
-                    <input type="text" disabled class="form-control" name="customerNameUpdate" #CustomerNameUpdate="ngModel" required id="customerName-update" [(ngModel)]="updatedCustomer.name" >
-                  </div>
-                  <div class="form-group">
-                    <label for="updateCompanyPassword">Password</label>
-                    <input type="password" class="form-control" name="customerPasswordUpdate" required #customerPasswordUpdate="ngModel" id="customerPassword-update" [(ngModel)]="updatedCustomer.password" >
-                         </div>
-                         {{customerPasswordUpdate.invalid}}
-                         <button [disabled]="updateCustomerBtnClickedDisabled" type="submit" class="btn btn-primary" [disabled]="  customerPasswordUpdate.invalid "   data-toggle="collapse"data-target="#updateCustomerModalCenter" aria-controls="#updateCustomerModalCenter">Update</button>
-                         
-                        </form>
-                      </div>
-                    </div>
-                    <!-- updata customr update collapsed card end -->
-                    
-                    
-                    
-            <!-- customr income list start-->
-            <div class="collapse" id="customerIncomeModalCenter">
-              <div class="card card-body">
-                <div *ngIf="customerIncomeListed && logInSuccess ">
-                  <div class="row">
-                    <div class="col-sm">
-                      actions Description 
-                    </div>
-                    <div class="col-sm">
-                      amount
-                    </div>
-                    
-                  </div>
-                  <div class="container" *ngFor="let income of customerIncomeList">
-                    <div class="row" >
-                      <div class="col-sm" >  
-                        <div *ngIf="income.descrption === 'CUSTOMER_PURCHASE'  ">
-                          {{income.name}} purchase  coupon
-                        </div>
-                        
-                      </div>
-                      <div class="col-sm" >
-                        {{income.amount}}
-                      </div>
-                      
-                      
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- customr income list end-->
-            
-       
       </div>
-     
-     
 
 
-     <!-- income -->
+
+
+      <!-- all clients income start-->
       <div class="tab-pane fade" id="v-pills-income-list" role="tabpanel" aria-labelledby="v-pills-income-list-tab">
-      <div class="card card-body">
+        <div class="card card-body">
           <div *ngIf="allIncomelisted && logInSuccess ; else elseMassege">
             <div class="row">
               <div class="col-sm">
-                  actions Description 
+                actions Description
               </div>
-                <div class="col-sm">
-                    amount
-                </div>
-                  
-                </div>
+              <div class="col-sm">
+                amount
+              </div>
+
+            </div>
             <div class="container" *ngFor="let income of allIncomelist">
-              <div class="row" >
-                <div class="col-sm" >  
-                <div *ngIf="income.descrption === 'COMPANY_NEW_COUPON'  ">
-                  <strong>{{income.name}}</strong>: creat new coupon
-                </div>
-                <div *ngIf="income.descrption === 'COMPANY_UPDATE_COUPON'  ">
-                    <strong>{{income.name}}</strong>: update  coupon  
-                </div>
-                    
-                <div *ngIf="income.descrption === 'CUSTOMER_PURCHASE'  ">
-                    <strong>{{income.name}}</strong>: purchase  coupon
-                </div>
-                       
+              <div class="row">
+                <div class="col-sm">
+                  <div *ngIf="income.descrption === 'COMPANY_NEW_COUPON'  ">
+                    <strong>{{income.name}}</strong>: creat new coupon
+                  </div>
+                  <div *ngIf="income.descrption === 'COMPANY_UPDATE_COUPON'  ">
+                    <strong>{{income.name}}</strong>: update coupon
+                  </div>
+
+                  <div *ngIf="income.descrption === 'CUSTOMER_PURCHASE'  ">
+                    <strong>{{income.name}}</strong>: purchase coupon
+                  </div>
+
 
                 </div>
-                  <div class="col-sm" >
-                    {{income.amount}}
-                  </div>
-                  
-                  
+                <div class="col-sm">
+                  {{income.amount}}
                 </div>
+
+
               </div>
             </div>
+          </div>
 
-            <ng-template  #elseMassege>
-                log in to do this task  
+          <ng-template #elseMassege>
+            log in to do this task
 
-              </ng-template>
+          </ng-template>
         </div>
-      </div> 
-
+      </div>
+      <!-- all clients income end-->
     </div>
   </div>
-  </div>
+</div>
