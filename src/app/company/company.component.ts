@@ -37,25 +37,25 @@ export class CompanyComponent implements OnInit {
 
   creatCouponResponseMassege = "";
   creatCouponMassegeError = false;
-  couponsList = {};
+  couponsList = new Array<Coupon>();
   couponsListed = false;
-  specificByTypeCouponsList = {};
+  specificByTypeCouponsList = new Array<Coupon>();
   specificByTypeCouponsListed = false;
-  couponUpdatedSuccessfully = false;
+  
   couponCreatedSuccessfully = false;
-  couponUpdatedFailed = false;
+ 
   couponCreatedFailed = false;
 
 
-  timpCoupon = {};
-  updatedCoupon = {};
+  timpCoupon = new Coupon("",null,null,null,null,null,null,null);
+  updatedCoupon = new Coupon("",null,null,null,null,null,null,null);
   updataCouponBtnDisabled = false;
   serchDataForCoupons = new SerchDataForCoupons(null, null, null)
   serchDataForCouponsByPrice = new SerchDataForCoupons(null, null, null)
   serchDataForCouponsByEndDate = new SerchDataForCoupons(null, null, null)
-  specificByPriceCouponsList = {};
+  specificByPriceCouponsList = new Array<Coupon>();;
   specificByPriceCouponsListed = false;
-  specificByEndDateCouponsList = {};
+  specificByEndDateCouponsList = new Array<Coupon>();;
   specificByEndDateCouponsListed = false;
   activateGetCouponByPriceTab = false;
   activateGetCouponByTypeTab = false;
@@ -70,7 +70,7 @@ export class CompanyComponent implements OnInit {
   // this function sends company log in data to the server
   onSubmit() {
     this.logInBtnClickedDisabled = true;
-    console.log(this.logInId);
+    
     this.companyHttpServic.companyLogIn(this.logInModel)
       .subscribe(data => this.logInResponseData(data)
         , error => console.log("error", error));
@@ -177,8 +177,7 @@ export class CompanyComponent implements OnInit {
   saveCouponForDeleteOrUpdate(coupon) {
     this.timpCoupon = coupon;
     this.updatedCoupon = coupon;
-    this.couponUpdatedSuccessfully = false;
-    this.couponUpdatedFailed = false;
+    
   }
   // sends the coupon data from the temporary variable 
   // and the authorization id to the server to update the coupon

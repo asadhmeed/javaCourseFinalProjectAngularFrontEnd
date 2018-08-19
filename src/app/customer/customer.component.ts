@@ -49,7 +49,7 @@ export class CustomerComponent implements OnInit {
   // when the customer press the log in button the function sendes the data to the server 
   onCustomerLogIn() {
     this.logInBtnClickedDisabled = true;
-    this.customerHttpServic.companyLogIn(this.logInModel)
+    this.customerHttpServic.customerLogIn(this.logInModel)
       .subscribe(data => this.logInResponseData(data)
         , error => console.log("error", error));
   }
@@ -142,7 +142,7 @@ export class CustomerComponent implements OnInit {
   }
   // receives data from the server
   purchaseCouponData(data) {
-    console.log(data);
+   
 
 
   }
@@ -161,7 +161,7 @@ export class CustomerComponent implements OnInit {
   // show the list in the customer work space
   private listMyCouponByTypeData(data) {
     this.myCouponsListByType = data.response;
-    console.log(data);
+    
     this.myCouponsListedByType = true;
 
 
@@ -182,7 +182,7 @@ export class CustomerComponent implements OnInit {
   // show the list in the customer work space
   private listMyCouponByPriceData(data) {
     this.myCouponsListByPrice = data.response;
-    console.log(data);
+    
     this.myCouponsListedByPrice = true;
 
 

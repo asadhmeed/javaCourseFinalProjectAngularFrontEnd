@@ -69,7 +69,7 @@ export class AdminComponent implements OnInit {
   // sends the log in data to the server
   onSubmit() {
     this.logInBtnClickedDisabled = true;
-    console.log(this.logInId);
+    
     this.adminHttpServic.adminLogIn(this.logInModel)
       .subscribe(data => this.logInResponseData(data)
         , error => console.log("error", error));
@@ -116,7 +116,7 @@ export class AdminComponent implements OnInit {
   // receive the data from the server response 
   // hide the admin work space
   logOutResponseData(data) {
-    console.log(data)
+    
     this.logInSuccess = false;
   }
 
@@ -178,7 +178,7 @@ export class AdminComponent implements OnInit {
   // sends the authorization id and the company data
   // from the temporary variable to the srver to delete it
   deleteCompnay() {
-    console.log(this.timpcompany);
+    
 
     let requestData = {
       clientId: this.logInId,
@@ -211,7 +211,7 @@ export class AdminComponent implements OnInit {
   // and the authorization id to the server to update the company
   onUpdateCompany() {
     this.updateCompanyBtnClickedDisabled = true;
-    console.log(this.updatedCompany);
+   
     let requestData = {
       clientId: this.logInId,
       company: this.updatedCompany
@@ -249,7 +249,7 @@ export class AdminComponent implements OnInit {
   // if the server faild to creat the customer a massage well appear explains that it failed
 
   private creatCustomerData(data) {
-    console.log(data);
+    
     this.creatCustomerBtnClickedDisabled = false;
     if (data.response === "CUSTOMERCREATED") {
       this.customerCreatedFailed = false;
@@ -277,7 +277,7 @@ export class AdminComponent implements OnInit {
   // receives the response from the server and change the list 
   // of the customers in the work space
   private deleteCustomerData(data) {
-    console.log(data)
+    
 
     this.listAllCustomers();
   }

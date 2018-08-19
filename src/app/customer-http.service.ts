@@ -12,8 +12,8 @@ export class CustomerHttpService {
   private baseUrl:string="customerRest";
 
 
-
-  companyLogIn(logIn:LogInData){
+// sends the log in data to the server to get the authorization id and log in successfully
+  customerLogIn(logIn:LogInData){
     return this.customerHttp.post<any>(this.baseUrl +"/customerlogIn",logIn);
 
  }
